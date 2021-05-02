@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>be.monolith.ehr</groupId>
+		<artifactId>ehr-parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>ehr-it</artifactId>
+	<description>EHR Integration Tests</description>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>be.monolith.ehr</groupId>
+			<artifactId>ehr-commons</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>be.monolith.ehr</groupId>
+			<artifactId>service-registry</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>be.monolith.ehr</groupId>
+			<artifactId>iam-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>be.monolith.ehr</groupId>
+			<artifactId>parties-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<extensions>true</extensions>
+
+				<configuration>
+					<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>prepare-it</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>start</goal>
+						</goals>
+
+						<configuration>
+							<containerNamePattern>%n</containerNamePattern>
+							<images>
+								<image>
+									<alias>service-registry</alias>
+									<name>service-registry:${project.version}</name>
+
+									<build>
+										<from>java:8</from>
+										<assembly>
+											<descriptor>service-registry-assembly.xml</descriptor>
+										</assembly>
+										<cmd>
+											<shell><![CDATA[java -jar maven/service-registry-${project.version}.jar]]></shell>
+										</cmd>
+									</build>
+
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>ehr_net</name>
+										</network>
+										<ports>
+											<port>${service-registry.port}:${service-registry.port}</port>
+										</ports>
+									</run>
+								</image>
+								<image>
+									<alias>api-gateway</alias>
+									<name>api-gateway:${project.version}</name>
+
+									<build>
+										<from>java:8</from>
+										<assembly>
+											<descriptor>api-gateway-assembly.xml</descriptor>
+										</assembly>
+										<cmd>
+											<shell><![CDATA[java -jar /maven/api-gateway-${project.version}.jar]]></shell>
+										</cmd>
+									</build>
+
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>ehr_net</name>
+										</network>
+										<ports>
+											<port>${api-gateway.port}:${api-gateway.port}</port>
+										</ports>
+									</run>
+								</image>
+
+								<image>
+									<alias>iam-service</alias>
+									<name>iam-service:${project.version}</name>
+
+									<build>
+										<from>java:8</from>
+										<assembly>
+											<descriptor>iam-service-assembly.xml</descriptor>
+										</assembly>
+										<cmd>
+											<shell><![CDATA[java -jar /maven/iam-service-${project.version}.jar]]></shell>
+										</cmd>
+									</build>
+
+									<run>
+										<network>
+											<mode>custom</mode>
+											<name>ehr_net</name>
+										</network>
+										<wait>
+											<http>
+												<url>https://localhost:${api-gateway.port}/actuator/health</url>
+												<allowAllHosts>true</allowAllHosts>
+											</http>
+											<time>60000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+					</execution>
+					<execution>
+						<id>cleanup-it</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

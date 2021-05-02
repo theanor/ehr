@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<groupId>be.monolith.ehr</groupId>
+	<artifactId>ehr-parent</artifactId>
+	<version>1.0.0</version>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.5.RELEASE</version>
+		<relativePath />
+	</parent>
+
+
+	<properties>
+
+		<java.version>11</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+
+
+		<spring-cloud.version>Hoxton.SR5</spring-cloud.version>
+		<springdoc-openapi.version>1.2.34</springdoc-openapi.version>
+
+
+		<jaxb.version>2.3.0</jaxb.version>
+		<jackson.version>2.10.3</jackson.version>
+		<lombok.version>1.18.12</lombok.version>
+		<slf4j.version>1.7.30</slf4j.version>
+		<javax.validation.version>2.0.1.Final</javax.validation.version>
+		<junit.version>4.13</junit.version>
+
+		<service-registry.port>9661</service-registry.port>
+
+		<api-gateway.port>8443</api-gateway.port>
+
+		<iam-service.port>9662</iam-service.port>
+
+	</properties>
+
+
+
+	<packaging>pom</packaging>
+
+	<dependencyManagement>
+		<dependencies>
+
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${javax.validation.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+
+ 		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.0</version>
+		</dependency>  
+	</dependencies>
+
+	<modules>
+		<module>ehr-commons</module>
+		<module>iam</module>
+		<module>parties</module>
+		<module>api-gateway</module>
+		<module>service-registry</module>
+		<module>ehr-it</module>
+	</modules>
+
+</project>

@@ -10,6 +10,11 @@ This README would normally document whatever steps are necessary to get your app
 
 ### How do I get set up? ###
 
+curl --verbose --insecure http://localhost:9662/login?username=foox^&password=barx
+
+curl --verbose --insecure https://localhost:8443/parties-service
+
+
 * Summary of set up
 * Configuration
 * Dependencies

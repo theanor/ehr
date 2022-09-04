@@ -32,7 +32,7 @@ public class Person extends Party {
 	 * administrative sex (not gender, not biological sex)
 	 */
 	@NotNull
-	private AdministrativeSex sex;
+	private AdministrativeGender administrativeGender;
 
 	@NotNull
 	private Instant birthDate;
@@ -48,7 +48,7 @@ public class Person extends Party {
 	@MinimumInstantPrecision(Precision.YEAR)
 	private Instant deathDate;
 
-	public enum AdministrativeSex {
+	public enum AdministrativeGender {
 		MAN, WOMAN, OTHER, UNKNOWN;
 
 		@Override

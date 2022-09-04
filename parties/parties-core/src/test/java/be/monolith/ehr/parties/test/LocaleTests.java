@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import be.monolith.ehr.parties.dto.Person;
-import be.monolith.ehr.parties.dto.Person.AdministrativeSex;
 import be.monolith.ehr.parties.dto.PersonName;
 import be.monolith.ehr.parties.dto.PostalAddress;
 import be.monolith.ehr.parties.text.PersonAgeFormatter;
@@ -40,11 +39,11 @@ public class LocaleTests {
 	@Test
 	public void GenderTests() {
 		Locale.setDefault(Locale.ENGLISH);
-		assertEquals("man", AdministrativeSex.MAN.toString());
-		assertEquals("woman", AdministrativeSex.WOMAN.toString());
+		assertEquals("man", Person.AdministrativeGender.MAN.toString());
+		assertEquals("woman", Person.AdministrativeGender.WOMAN.toString());
 		Locale.setDefault(Locale.FRENCH);
-		assertEquals("homme", AdministrativeSex.MAN.toString());
-		assertEquals("femme", AdministrativeSex.WOMAN.toString());
+		assertEquals("homme", Person.AdministrativeGender.MAN.toString());
+		assertEquals("femme", Person.AdministrativeGender.WOMAN.toString());
 	}
 
 	@Test

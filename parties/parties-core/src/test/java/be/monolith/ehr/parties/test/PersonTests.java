@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import be.monolith.ehr.parties.dto.Person;
-import be.monolith.ehr.parties.dto.Person.AdministrativeSex;
 import be.monolith.ehr.value.Identifier;
 import be.monolith.ehr.value.Instant;
 import be.monolith.ehr.value.Instant.Precision;
@@ -50,7 +49,7 @@ public class PersonTests {
 		Person p = new Person();
 		p.setBirthDate(new Instant(Precision.UNKNOWN, new Date()));
 		p.setLanguages(Arrays.asList("fr"));
-		p.setSex(AdministrativeSex.MAN);
+		p.setAdministrativeGender(Person.AdministrativeGender.MAN);
 		p.setSource("mysource");
 		p.setIdentifiers(Set.of(new Identifier("issuer", "scheme", "value", Period.AT_ALL_TIMES)));
 
